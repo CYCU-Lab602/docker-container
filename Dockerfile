@@ -85,31 +85,31 @@ ENV PYTHON_VERSION 3.10
 
 # conda and test dependencies
 RUN curl -L https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh \
-    && sudo chmod +x miniconda.sh \
+    && sudo chmod +x /tmp/miniconda.sh \
     && sudo bash /tmp/miniconda.sh -b -p /opt/conda/ \
     && rm -rf /tmp/miniconda.sh \
     && eval "$(/opt/conda shell.bash hook)" \
-    && sudo /opt/conda/bin/conda install -y -c conda-canary -c defaults -c conda-forge \
-        conda conda-package-handling \
-        python=$PYTHON_VERSION pycosat requests ruamel_yaml cytoolz \
-        anaconda-client nbformat \
-        pytest pytest-cov pytest-timeout mock responses pexpect xonsh \
-        flake8 \
-    && sudo /opt/conda/bin/conda clean --all --yes
-
-RUN sudo /opt/conda/bin/pip install codecov radon \
-    && sudo rm -rf ~root/.cache/pip
-
-RUN sudo /opt/conda/bin/pip install -r /tmp/requirements.txt \
-    && sudo rm -rf ~root/.cache/pip
-
-# conda-build and test dependencies
-RUN sudo /opt/conda/bin/conda install -y -c defaults -c conda-forge \
-        conda-build patch git \
-        perl pytest-xdist pytest-catchlog pytest-mock \
-        filelock jinja2 conda-verify pkginfo \
-        glob2 beautifulsoup4 chardet pycrypto \
-    && sudo /opt/conda/bin/conda clean --all --yes
+#    && sudo /opt/conda/bin/conda install -y -c conda-canary -c defaults -c conda-forge \
+#        conda conda-package-handling \
+#        python=$PYTHON_VERSION pycosat requests ruamel_yaml cytoolz \
+#        anaconda-client nbformat \
+#        pytest pytest-cov pytest-timeout mock responses pexpect xonsh \
+#        flake8 \
+#    && sudo /opt/conda/bin/conda clean --all --yes
+#
+#RUN sudo /opt/conda/bin/pip install codecov radon \
+#    && sudo rm -rf ~root/.cache/pip
+#
+#RUN sudo /opt/conda/bin/pip install -r /tmp/requirements.txt \
+#    && sudo rm -rf ~root/.cache/pip
+#
+## conda-build and test dependencies
+#RUN sudo /opt/conda/bin/conda install -y -c defaults -c conda-forge \
+#        conda-build patch git \
+#        perl pytest-xdist pytest-catchlog pytest-mock \
+#        filelock jinja2 conda-verify pkginfo \
+#        glob2 beautifulsoup4 chardet pycrypto \
+#    && sudo /opt/conda/bin/conda clean --all --yes
 
 # Lab602
 # SSH工具安裝
@@ -130,7 +130,7 @@ RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/
 
 # Lab602
 # 安裝 openCV
-
+# 
 # RUN apt-get update \
 #     && apt-get install -y \
 #         build-essential \
@@ -241,55 +241,55 @@ RUN apt-get update \
         python3-numpy \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install numpy
+# RUN pip3 install numpy
 
 WORKDIR /
 
 # -D CUDA_ARCH_BIN=8.6 算力查詢 https://developer.nvidia.com/zh-cn/cuda-gpus#compute 
 
-RUN wget -O opencv_contrib-.zip https://github.com/opencv/opencv_contrib/archive/.zip \
-    && unzip opencv_contrib-.zip \
-    && rm opencv_contrib-.zip
-
-RUN wget https://github.com/opencv/opencv/archive/.zip \
-    && unzip .zip \
-    && mkdir /opencv-/cmake_binary \
-    && cd /opencv-/cmake_binary \
-    && cmake   -D CMAKE_BUILD_TYPE=RELEASE \
-		-D OPENCV_GENERATE_PKGCONFIG=ON \
-		-D CMAKE_C_COMPILER=/usr/bin/gcc-7 \
-		-D CMAKE_INSTALL_PREFIX=/usr/local \
-		-D INSTALL_PYTHON_EXAMPLES=ON \
-		-D INSTALL_C_EXAMPLES=OFF \
-		-D WITH_TBB=ON \
-		-D WITH_CUDA=ON \
-        -D WITH_OPENMP=ON \
-        -D ENABLE_PRECOMPILED_HEADERS=OFF \
-		-D ENABLE_FAST_MATH=1 \
-		-D CUDA_FAST_MATH=1 \
-		-D WITH_CUBLAS=1 \
-		-D WITH_V4L=ON \
-		-D WITH_QT=OFF \
-		-D WITH_OPENGL=ON \
-		-D WITH_GSTREAMER=ON \
-		-D OPENCV_PC_FILE_NAME=opencv.pc \
-		-D OPENCV_ENABLE_NONFREE=ON \
-		-D OPENCV_EXTRA_MODULES_PATH=/opencv_contrib-/modules \
-		-D WITH_CUDNN=ON \
-		-D OPENCV_DNN_CUDA=ON \
-		-D CUDA_ARCH_BIN=7.5 \
-		.. \
-    && make -j$(nproc) \
-    && make install \
-    && echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf \
-    && ldconfig \
-    && echo "PKG_CONFIG_PATH=\$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig" | tee -a /etc/bash.bashrc \
-    && echo "export PKG_CONFIG_PATH" | tee -a /etc/bash.bashrc
+#RUN wget -O opencv_contrib-.zip https://github.com/opencv/opencv_contrib/archive/.zip \
+#    && unzip opencv_contrib-.zip \
+#    && rm opencv_contrib-.zip
+#
+#RUN wget https://github.com/opencv/opencv/archive/.zip \
+#    && unzip .zip \
+#    && mkdir /opencv-/cmake_binary \
+#    && cd /opencv-/cmake_binary \
+#    && cmake   -D CMAKE_BUILD_TYPE=RELEASE \
+#		-D OPENCV_GENERATE_PKGCONFIG=ON \
+#		-D CMAKE_C_COMPILER=/usr/bin/gcc-7 \
+#		-D CMAKE_INSTALL_PREFIX=/usr/local \
+#		-D INSTALL_PYTHON_EXAMPLES=ON \
+#		-D INSTALL_C_EXAMPLES=OFF \
+#		-D WITH_TBB=ON \
+#		-D WITH_CUDA=ON \
+#        -D WITH_OPENMP=ON \
+#        -D ENABLE_PRECOMPILED_HEADERS=OFF \
+#		-D ENABLE_FAST_MATH=1 \
+#		-D CUDA_FAST_MATH=1 \
+#		-D WITH_CUBLAS=1 \
+#		-D WITH_V4L=ON \
+#		-D WITH_QT=OFF \
+#		-D WITH_OPENGL=ON \
+#		-D WITH_GSTREAMER=ON \
+#		-D OPENCV_PC_FILE_NAME=opencv.pc \
+#		-D OPENCV_ENABLE_NONFREE=ON \
+#		-D OPENCV_EXTRA_MODULES_PATH=/opencv_contrib-/modules \
+#		-D WITH_CUDNN=ON \
+#		-D OPENCV_DNN_CUDA=ON \
+#		-D CUDA_ARCH_BIN=7.5 \
+#		.. \
+#    && make -j$(nproc) \
+#    && make install \
+#    && echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf \
+#    && ldconfig \
+#    && echo "PKG_CONFIG_PATH=\$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig" | tee -a /etc/bash.bashrc \
+#    && echo "export PKG_CONFIG_PATH" | tee -a /etc/bash.bashrc
     # && rm /.zip \
     # && rm -r /opencv-* \
     # && rm -r /opencv_*
 
-
+# 
 ################################################################################
 # builder
 ################################################################################
