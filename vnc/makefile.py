@@ -192,7 +192,6 @@ def main():
                 break
             infoDict['tag'] = support_images[int(cudaVersion)].split(':')[1]
             infoDict['image'] = support_images[int(cudaVersion)]
-            print(infoDict)
 
             while True:
                 smiOutput = subprocess.run(['nvidia-smi', '-L'], stdout=subprocess.PIPE).stdout.decode('utf-8').split('\n')
