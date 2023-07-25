@@ -1,0 +1,330 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+from datetime import datetime
+import configparser
+import logging
+import random
+import string
+import secrets
+import docker
+# import update
+import shutil
+import os
+import sys
+from images.version import support_images
+import time
+# test
+file_handler = logging.FileHandler('vnc/log/{}.log'.format(datetime.today().strftime('%Y-%m-%d-%H:%M:%S')))
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.INFO)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        file_handler,
+        console_handler
+    ]
+)
+
+
+logging.getLogger("requests").setLevel(logging.NOTSET)
+opencvVersionList = ['none', '4.5.0', '4.3.0', '4.2.0', '4.1.2',
+                     '4.1.1', '4.1.0', '4.0.1', '4.0.0', '3.4.12',
+                     '3.4.11', '3.4.10', '3.4.9', '3.4.8', '3.4.7',
+                     '3.4.6', '3.4.5', '3.4.4', '3.4.3']
+
+def findUnusedPort():
+    """find unused port"""
+
+    usingPortList = []
+    containerIDList = docker.ps_ap()
+    for i in containerIDList:
+        for port in docker.container_port_id(i):
+            logging.debug(port)
+            try:
+                usingPortList.append(int(port))
+            except:
+                continue
+    logging.debug(usingPortList)
+    while True:
+        # randomPort = random.randrange(49152, 65535, 4)
+        randomPort = random.randrange(52360, 55560, 4)
+        logging.debug(randomPort)
+        try:
+            logging.debug(usingPortList.index(port))
+        except:
+            break
+    return randomPort
+
+
+def makePasswordWith(mode):
+    """custom different lengh password with string and numbers"""
+
+    alphabet = string.ascii_letters + string.digits
+    if mode == 4:
+        password = ''.join(secrets.choice(alphabet) for i in range(4))
+    elif mode == 16:
+        password = ''.join(secrets.choice(alphabet) for i in range(16))
+    return password
+
+def fileKeeper():
+    os.remove('Makefile')
+    os.remove('Dockerfile.j2')
+    os.remove('rootfs/startup.sh')
+    shutil.copy2('vnc/data/source/Makefile', 'Makefile')
+    shutil.copy2('vnc/data/source/Dockerfile.j2', 'Dockerfile.j2')
+    shutil.copy2('vnc/data/source/startup.sh', 'rootfs/startup.sh')
+    docker.chmod_x(filename='rootfs/startup.sh')
+
+
+def customFiles(infodict, isBuild=False):
+    lines = []
+    unusedPort = findUnusedPort()
+    with open('vnc/data/modified/Makefile', 'r', encoding='utf8') as f:
+        for i in f.readlines():
+            if i.find('REPO  ?= ') != -1:
+                lines.append('REPO  ?= {}\n'.format(infodict['repo']))
+            elif i.find('TAG   ?= ') != -1:
+                lines.append('TAG   ?= {}\n'.format(infodict['tag']))
+            elif i.find('IMAGE ?= ') != -1:
+                lines.append('IMAGE ?= {}\n'.format(infodict['image']))
+
+            elif i.find('OPENCV ?= ') != -1:
+                lines.append('OPENCV ?= {}\n'.format(infodict['openCV']))
+
+            elif i.find('GPUS ?= ') != -1:
+                lines.append('GPUS ?= {}\n'.format(infodict['GPUS']))
+
+            elif i.find('PORT80 ?= ') != -1:
+                lines.append('PORT80 ?= {}\n'.format(unusedPort))
+
+            elif i.find('PORT443 ?= ') != -1:
+                lines.append('PORT443 ?= {}\n'.format(unusedPort+2))
+
+            elif i.find('PORT22 ?= ') != -1:
+                lines.append('PORT22 ?= {}\n'.format(unusedPort+1))
+            
+            elif i.find('PORT6006 ?= ') != -1:
+                lines.append('PORT6006 ?= {}\n'.format(unusedPort+3))
+
+            elif i.find('USERSNAME ?= ') != -1:
+                lines.append('USERSNAME ?= {}\n'.format('lab602.{}'.format(infodict['StudentID'])))
+
+            elif i.find('USERSPSWD ?= ') != -1:
+                lines.append('USERSPSWD ?= {}\n'.format(infodict['UserPassword']))
+            
+            elif i.find('WEBSITEPSWD ?= ') != -1:
+                lines.append('WEBSITEPSWD ?= {}\n'.format(infodict['WebsitePassword']))
+
+            elif i.find('ROOTPSWD ?= ') != -1:
+                lines.append('ROOTPSWD ?= {}\n'.format(infodict['RootPassword']))
+
+            elif i.find('CONTAINERNAME ?= ') != -1:
+                lines.append('CONTAINERNAME ?= {}\n'.format(infodict['StudentID']))
+
+            else:
+                lines.append(i)
+
+    fileKeeper()
+    shutil.copy2('vnc/data/modified/Dockerfile.j2', 'Dockerfile.j2')
+    shutil.copy2('vnc/data/modified/startup.sh', 'rootfs/startup.sh')
+    docker.chmod_x(filename='rootfs/startup.sh')
+    
+    with open('Makefile', 'w', encoding='utf8') as f:
+        f.writelines(lines)
+    docker.make_clean()
+    
+    if isBuild:
+        docker.make_build()
+    docker.make_run()
+    
+    fileKeeper()
+
+    logging.info('')
+    logging.info('----------CONTAINER INFO----------')
+    logging.info('- User Name = {}'.format('lab602.{}'.format(infodict['StudentID'])))
+    logging.info('- User Password = {}'.format(infodict['UserPassword']))
+    logging.info('- Website Password = {}'.format(infodict['WebsitePassword']))
+    logging.info('- CONTAINER Name = {}'.format(infodict['StudentID']))
+    logging.info('- Port 80 = {}'.format(unusedPort))
+    logging.info('- Port 22 = {}'.format(unusedPort+1))
+    logging.info('- Port 443 = {}'.format(unusedPort+2))
+    logging.info('- Port 6006 = {}'.format(unusedPort+3))
+    logging.info('----------------------------------------')
+
+
+
+
+def main():
+    while True:
+        infoDict = {'repo': 'lab602',
+                    'tag': '',
+                    'image': '',
+                    'openCV': '',
+                    'GPUS': '',
+                    'StudentID': '',
+                    'UserPassword': '',
+                    'RootPassword': '',
+                    'WebsitePassword': ''}
+        configParser = configparser.RawConfigParser()   
+        configFilePath = 'vnc/config'
+        configParser.read(configFilePath)
+        infoDict['RootPassword'] = configParser.get('config', 'RootPassword')
+
+        frameworkAns = input('選擇構架(1/2/3) : 1.PyTorch\t2.Tensorflow\t3.無\n')
+        if frameworkAns == '1':
+            logging.info('------------------------------------')
+            logging.info('|\t\t已廢棄, 請選擇3\t\t|')
+            logging.info('------------------------------------')
+            logging.info('\n')
+            continue
+            # data = update.pytorchWebsite()
+            data = ''
+            for index, value in enumerate(data):
+                logging.info('{}. {},\t\tUbuntu={},\tPython={},\tCUDA={},\tcuDNN={},\tPyTorch={}'.format(index+1, value['ImageVersion'], value['Ubuntu'], value['Python'], value['CUDA'], value['cuDNN'], value['PyTorch']))
+            while True:
+                pytorchVersionAns = input('選擇PyTorch構架版本 : ')
+                if int(pytorchVersionAns) <= len(data):
+                    if int(float(data[int(pytorchVersionAns)-1]['ImageVersion'])) > 18:
+                        infoDict['REPO'] = 'lab602/nvcr.io/nvidia/pytorch/{}-py3'.format(data[int(pytorchVersionAns)-1]['ImageVersion'])
+                        infoDict['image'] = 'nvcr.io/nvidia/pytorch:{}-py3'.format(data[int(pytorchVersionAns)-1]['ImageVersion'])
+                    else:
+                        infoDict['REPO'] = 'lab602/nvcr.io/nvidia/pytorch/{}'.format(data[int(pytorchVersionAns)-1]['ImageVersion'])
+                        infoDict['image'] = 'nvcr.io/nvidia/pytorch:{}'.format(data[int(pytorchVersionAns)-1]['ImageVersion'])
+
+                        
+                    for index, opencvVersion in enumerate(opencvVersionList):
+                        logging.info('{}. {}'.format(index+1, opencvVersion))
+                    while True:
+                        opencvVersionAns = input('選擇openCV版本 : ')
+                        if int(opencvVersionAns) <= len(opencvVersionList):
+                            if opencvVersionList[int(opencvVersionAns)-1] != 'none':
+                                infoDict['REPO'] = infoDict['REPO'] + '-{}'.format(opencvVersionList[int(opencvVersionAns)-1])
+                            infoDict['openCV'] = opencvVersionList[int(opencvVersionAns)-1]
+                            gpusAns = input('選擇GPU設備 ex: 0 or 0,1 : ')
+                            infoDict['GPUS'] = gpusAns
+                            studentID = input('輸入學號 : ')
+                            infoDict['StudentID'] = studentID
+                            
+                            while True:
+                                UserPassword = makePasswordWith(4)
+                                WebsitePassword = makePasswordWith(16)
+                                isPassOK = input('User Password : {}\nWebsite password : {}\n是否使用此組密碼?(y/n)\n'.format(UserPassword, WebsitePassword))
+                                if isPassOK == 'y':
+                                    infoDict['UserPassword'] = UserPassword
+                                    infoDict['WebsitePassword'] = WebsitePassword
+                                    isStart = input('確定要開始? (y/n)\n')
+                                    if isStart == 'y':
+                                        customFiles(infoDict)
+                                        exit(0)
+                                    else:
+                                        break
+                                else:
+                                    continue                            
+                        else:
+                            logging.info('Error openCV Version')
+                            isRestart = input('是否重新選擇openCV版本?(y/n)\n')
+                            if isRestart == 'y':
+                                continue
+                            else:
+                                break
+                else:
+                    logging.info('\nError PyTorch Framework Version\n\n')
+                    isRestart = input('是否重新選擇PyTorch構架版本?(y/n)\n')
+                    if isRestart == 'y':
+                        continue
+                    else:
+                        break
+
+        elif frameworkAns == '2':
+            logging.info('\n暫時不支援 請重新選擇架構\n\n')
+            continue
+            # update.tensorflowWebsite()
+            # versionAns = input('選擇Tensorflow構架版本 : ')
+        elif frameworkAns == '3':
+            while True:
+                
+                logging.info('-----------------------------------------------------------')
+                for index, image in enumerate(support_images):
+                    logging.info('| {}:\t{}\t|'.format(index, image))
+                logging.info('-----------------------------------------------------------')
+                cudaVersion = input('\n請選擇已支援CUDA版本的IMAGE: ')
+                if int(cudaVersion) >= len(support_images):
+                    logging.info('輸入錯誤')
+                    break
+                infoDict['tag'] = support_images[int(cudaVersion)].split(':')[1]
+                infoDict['image'] = support_images[int(cudaVersion)]
+                
+                logging.info('\n')
+                logging.info('-------------------')
+                for index, opencvVersion in enumerate(opencvVersionList):
+                    logging.info('| {}:\t{}\t|'.format(index, opencvVersion))
+                logging.info('-------------------')
+                
+                while True:
+                    opencvVersionAns = input('\n請選擇已支援openCV的版本: ')
+                    if int(opencvVersionAns) < len(opencvVersionList):
+                        if opencvVersionList[int(opencvVersionAns)] != 'none':
+                            infoDict['tag'] = infoDict['tag'] + '-{}'.format(opencvVersionList[int(opencvVersionAns)])
+                        infoDict['openCV'] = opencvVersionList[int(opencvVersionAns)]
+                        gpusAns = input('\n選擇GPU設備 ex: 0 or 0,1 : ')
+                        infoDict['GPUS'] = gpusAns
+                        studentID = input('\n輸入學號 : ')
+                        
+                        infoDict['StudentID'] = studentID
+                        while True:
+                            container_names = docker.container_names()
+                            if any(infoDict['StudentID'] in x for x in container_names):
+                                isDeleted = input('\n發現有同名Container, 是否清除?(y/n) ')
+                                if isDeleted == 'y':
+                                    docker.container_stop_id(infoDict['StudentID'])
+                                    logging.info('----------停止：{} ----------'.format(infoDict['StudentID']))
+                                    time.sleep(1)
+                                    # 刪除container暫無用
+                                    logging.info('----------刪除：{} ----------'.format(infoDict['StudentID']))
+                                    docker.container_rm_id(infoDict['StudentID'])
+                                else:
+                                    logging.info('---------重新開始----------')
+                                    exit(0)
+
+                            while True:
+                                #UserPassword = makePasswordWith(4)
+                                UserPassword = input("\nPlease enter your password: ")
+                                WebsitePassword = makePasswordWith(16)
+                                isPassOK = input('\nUser Password : {}\nWebsite password : {}\n\n是否使用此組密碼?(y/n) '.format(UserPassword, WebsitePassword))
+                                if isPassOK == 'y':
+                                    infoDict['UserPassword'] = UserPassword
+                                    infoDict['WebsitePassword'] = WebsitePassword
+                                    isStart = input('\n確定要開始? (y/n) ')
+                                    if isStart == 'y':
+                                        # 確認有無tag, 沒有就會Build
+                                        if any(infoDict['tag'] in x for x in docker.image_ls_tags()):
+                                            customFiles(infoDict)
+                                        else:
+                                            customFiles(infoDict, isBuild=True)
+                                        exit(0)
+                                    else:
+                                        break
+                                else:
+                                    continue                            
+                    else:
+                        logging.info('Error openCV Version')
+                        isRestart = input('是否重新選擇openCV版本?(y/n) ')
+                        if isRestart == 'y':
+                            continue
+                        else:
+                            break
+
+            # # versionAns = input('選擇無構架版本 : ')
+        else:
+            logging.info('Error Framework')
+            isRestart = input('是否重新開始?(y/n)\n')
+            if isRestart == 'y':
+                continue
+            else:
+                break
+
+if __name__ == '__main__':
+    main()

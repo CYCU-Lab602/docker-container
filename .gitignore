@@ -1,0 +1,6 @@
+*.pyc
+tags
+cscope*
+vnc/log/*.log
+vnc/__pycache__/
+vnc/images/__pycache__/

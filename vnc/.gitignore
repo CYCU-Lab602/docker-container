@@ -1,0 +1,4 @@
+* text eol=lf
+*/__pycache__
+*.log
+*.pyc
