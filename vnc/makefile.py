@@ -196,8 +196,8 @@ def main():
             while True:
                 smiOutput = subprocess.run(['nvidia-smi', '-L'], stdout=subprocess.PIPE).stdout.decode('utf-8').split('\n')
                 logging.info('\n-------------------------Supported GPUs--------------------------')
-                logging.info('|\t {}\t\t\t|'.format(smiOutput[0].split('(')[0]))
-                logging.info('|\t {}\t\t\t|'.format(smiOutput[1].split('(')[0]))
+                for i in range(len(smiOutput)-1):
+                    logging.info('|\t {}\t\t\t|'.format(smiOutput[i].split('(')[0]))
                 logging.info('-----------------------------------------------------------------')
 
                 while True:
