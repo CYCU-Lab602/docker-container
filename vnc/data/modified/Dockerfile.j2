@@ -224,8 +224,8 @@ FROM system
 LABEL maintainer="fcwu.tw@gmail.com"
 COPY --from=builder /src/web/dist/ /usr/local/lib/web/frontend/
 COPY rootfs /
-RUN ln -sf /usr/local/lib/web/frontend/static/websockify /usr/local/lib/web/frontend/static/novnc/utils/websockify
-chmod +x /usr/local/lib/web/frontend/static/websockify/run
+RUN ln -sf /usr/local/lib/web/frontend/static/websockify /usr/local/lib/web/frontend/static/novnc/utils/websockify && \
+    chmod +x /usr/local/lib/web/frontend/static/websockify/run
 
 ################################################################################
 # expose ssh and vnc port
