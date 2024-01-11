@@ -87,11 +87,10 @@ make clean
 FLAVOR=lxqt ARCH=amd64 IMAGE=nvidia/cuda:12.3.1-devel-ubuntu20.04 make build
 make run
 ```
-## IP settings
+## Limit IP
 ```bash
-limit ip
 sudo iptables -I DOCKER-USER -m iprange -i enp5s0 ! --src-range 140.135.10.210-140.135.11.221 -j DROP
 ```
 ## File specifications
-1. Replace the randomPort range in [makefile.py](https://github.com/CYCU-Lab602/vnc/blob/master/makefile.py#L48) with the port of current workstation.
-2. Replace the paths in [Makefile](https://github.com/CYCU-Lab602/vnc/blob/master/data/modified/Makefile#L64-L66).
+1. Replace the randomPort range in [makefile.py](./vnc/makefile.py) with the port of current workstation.
+2. Replace the paths in [Makefile](./Makefile).
