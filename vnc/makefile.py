@@ -1,18 +1,19 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
-from datetime import datetime
 import configparser
 import logging
-import random
-import string
-import secrets
-import docker
-import shutil
 import os
-import sys
-from images.version import support_images
-import time
+import random
+import secrets
+import shutil
+import string
 import subprocess
+import sys
+import time
+from datetime import datetime
+
+import docker
+from images.version import support_images
 
 file_handler = logging.FileHandler(
     "vnc/log/{}.log".format(datetime.today().strftime("%Y-%m-%d-%H:%M:%S"))
@@ -44,11 +45,10 @@ def findUnusedPort():
                 continue
     logging.debug(usingPortList)
     while True:
-        # randomPort = random.randrange(49152, 65535, 4)
         randomPort = random.randrange(52360, 55560, 4)
         logging.debug(randomPort)
         try:
-            logging.debug(usingPortList.index(port))
+            logging.debug(usingPortList.index(randomPort))
         except:
             break
     return randomPort
@@ -56,6 +56,7 @@ def findUnusedPort():
 
 def makePasswordWith(mode):
     alphabet = string.ascii_letters + string.digits
+    password = ""
     if mode == 4:
         password = "".join(secrets.choice(alphabet) for i in range(4))
     elif mode == 16:
@@ -130,7 +131,7 @@ def customFiles(infodict, isBuild=False):
 
     logging.info("")
     logging.info("----------CONTAINER INFO----------")
-    logging.info("- User Name = {}".format("lab602.{}".format(infodict["StudentID"])))
+    logging.info("- User Name = {}".format("clink.{}".format(infodict["StudentID"])))
     logging.info("- User Password = {}".format(infodict["UserPassword"]))
     logging.info("- Website Password = {}".format(infodict["WebsitePassword"]))
     logging.info("- CONTAINER Name = {}".format(infodict["StudentID"]))
@@ -145,37 +146,43 @@ def main():
     # welcome message
     logging.info(
         """
-██╗░░░░░░█████╗░██████╗░░█████╗░░█████╗░██████╗░
-██║░░░░░██╔══██╗██╔══██╗██╔═══╝░██╔══██╗╚════██╗
-██║░░░░░███████║██████╦╝██████╗░██║░░██║░░███╔═╝
-██║░░░░░██╔══██║██╔══██╗██╔══██╗██║░░██║██╔══╝░░
-███████╗██║░░██║██████╦╝╚█████╔╝╚█████╔╝███████╗
-╚══════╝╚═╝░░╚═╝╚═════╝░░╚════╝░░╚════╝░╚══════╝
+ .d8888b.         888      8888888 888b    888 888    d8P
+d88P  Y88b        888        888   8888b   888 888   d8P
+888    888        888        888   88888b  888 888  d8P
+888               888        888   888Y88b 888 888d88K
+888               888        888   888 Y88b888 8888888b
+888    888 888888 888        888   888  Y88888 888  Y88b
+Y88b  d88P        888        888   888   Y8888 888   Y88b
+ "Y8888P"         88888888 8888888 888    Y888 888    Y88b
 
-░█████╗░░█████╗░███╗░░██╗████████╗░█████╗░██╗███╗░░██╗███████╗██████╗░
-██╔══██╗██╔══██╗████╗░██║╚══██╔══╝██╔══██╗██║████╗░██║██╔════╝██╔══██╗
-██║░░╚═╝██║░░██║██╔██╗██║░░░██║░░░███████║██║██╔██╗██║█████╗░░██████╔╝
-██║░░██╗██║░░██║██║╚████║░░░██║░░░██╔══██║██║██║╚████║██╔══╝░░██╔══██╗
-╚█████╔╝╚█████╔╝██║░╚███║░░░██║░░░██║░░██║██║██║░╚███║███████╗██║░░██║
-░╚════╝░░╚════╝░╚═╝░░╚══╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
+8888888b.   .d88888b.   .d8888b.  888    d8P  8888888888 8888888b.
+888  "Y88b d88P" "Y88b d88P  Y88b 888   d8P   888        888   Y88b
+888    888 888     888 888    888 888  d8P    888        888    888
+888    888 888     888 888        888d88K     8888888    888   d88P
+888    888 888     888 888        8888888b    888        8888888P"
+888    888 888     888 888    888 888  Y88b   888        888 T88b
+888  .d88P Y88b. .d88P Y88b  d88P 888   Y88b  888        888  T88b
+8888888P"   "Y88888P"   "Y8888P"  888    Y88b 8888888888 888   T88b
 
-░██████╗░█████╗░██████╗░██╗██████╗░████████╗
-██╔════╝██╔══██╗██╔══██╗██║██╔══██╗╚══██╔══╝
-╚█████╗░██║░░╚═╝██████╔╝██║██████╔╝░░░██║░░░
-░╚═══██╗██║░░██╗██╔══██╗██║██╔═══╝░░░░██║░░░
-██████╔╝╚█████╔╝██║░░██║██║██║░░░░░░░░██║░░░
-╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░░░░╚═╝░░░
+ .d8888b.   .d8888b.  8888888b.  8888888 8888888b. 88888888888
+d88P  Y88b d88P  Y88b 888   Y88b   888   888   Y88b    888
+Y88b.      888    888 888    888   888   888    888    888
+ "Y888b.   888        888   d88P   888   888   d88P    888
+    "Y88b. 888        8888888P"    888   8888888P"     888
+      "888 888    888 888 T88b     888   888           888
+Y88b  d88P Y88b  d88P 888  T88b    888   888           888
+ "Y8888P"   "Y8888P"  888   T88b 8888888 888           888
     """
     )
 
     while True:
         infoDict = {
-            "repo": "lab602",
+            "repo": "clink",
             "tag": "",
             "image": "",
             "openCV": "",
             "GPUS": "",
-            "StudentID": "",
+            "EmployeeName": "",
             "UserPassword": "",
             "RootPassword": "",
             "WebsitePassword": "",
@@ -228,25 +235,27 @@ def main():
                         infoDict["GPUS"] = gpusAns
 
                     while True:
-                        studentID = input("\n(3) Enter your container's name: ")
-                        infoDict["StudentID"] = studentID
+                        employeeName = input("\n(3) Enter your container's name: ")
+                        infoDict["EmployeeName"] = employeeName
 
                         while True:
                             container_names = docker.container_names()
 
-                            if any(infoDict["StudentID"] in x for x in container_names):
+                            if any(
+                                infoDict["EmployeeName"] in x for x in container_names
+                            ):
                                 isDeleted = input(
                                     "\nFound duplicate container, stop & remove? (y/n) "
                                 )
                                 if isDeleted == "y":
-                                    docker.container_stop_id(infoDict["StudentID"])
+                                    docker.container_stop_id(infoDict["EmployeeName"])
                                     logging.info(
-                                        "Stopped: {}".format(infoDict["StudentID"])
+                                        "Stopped: {}".format(infoDict["EmployeeName"])
                                     )
                                     time.sleep(0.3)
-                                    docker.container_rm_id(infoDict["StudentID"])
+                                    docker.container_rm_id(infoDict["EmployeeName"])
                                     logging.info(
-                                        "Killed: {}".format(infoDict["StudentID"])
+                                        "Killed: {}".format(infoDict["EmployeeName"])
                                     )
                                 else:
                                     logging.info("Please enter a new container name!\n")
@@ -264,7 +273,7 @@ def main():
     - User Password : {}
     - Website password : {}\n
 Confirm? (y/n) """.format(
-                                            studentID, userPassword, vncPassword
+                                            employeeName, userPassword, vncPassword
                                         )
                                     )
 
