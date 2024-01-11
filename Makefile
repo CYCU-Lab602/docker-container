@@ -1,7 +1,7 @@
 .PHONY: build run
 
 # Default values for variables
-REPO  ?= lab602
+REPO  ?= clink
 TAG   ?= 11.4.3-cudnn8-devel-ubuntu20.04
 # you can choose other base image versions
 IMAGE ?= nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
@@ -21,31 +21,31 @@ OPENCV ?=
 GPUS ?= 0
 
 # Lab602 設定 PORT
-PORT80 ?= 54648
+PORT80 ?= 53836
 
 # Lab602 設定 PORT
-PORT443 ?= 54650
+PORT443 ?= 53838
 
 # Lab602 設定 PORT
-PORT22 ?= 54649
+PORT22 ?= 53837
 
 # Lab602 設定 PORT
-PORT6006 ?= 54651
+PORT6006 ?= 53839
 
 # Lab602 設定用戶名稱 lab602.{學號}
-USERSNAME ?= lab602.123
+USERSNAME ?= clink.test
 
 # Lab602 設定用戶密碼
-USERSPSWD ?= 123
+USERSPSWD ?= 0800
 
 # Lab602 設定ROOT密碼
 ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
 
 # Lab602 設定 container名稱 學號
-CONTAINERNAME ?= 123
+CONTAINERNAME ?= test
 
 # Lab602 設定 container名稱 學號
-WEBSITEPSWD ?= 123
+WEBSITEPSWD ?= 0800
 
 # Rebuild the container image
 build: $(templates)

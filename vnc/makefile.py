@@ -100,7 +100,7 @@ def customFiles(infodict, isBuild=False):
             elif i.find("USERSNAME ?= ") != -1:
                 lines.append(
                     "USERSNAME ?= {}\n".format(
-                        "lab602.{}".format(infodict["StudentID"])
+                        "clink.{}".format(infodict["EmployeeName"])
                     )
                 )
             elif i.find("USERSPSWD ?= ") != -1:
@@ -110,7 +110,7 @@ def customFiles(infodict, isBuild=False):
             elif i.find("ROOTPSWD ?= ") != -1:
                 lines.append("ROOTPSWD ?= {}\n".format(infodict["RootPassword"]))
             elif i.find("CONTAINERNAME ?= ") != -1:
-                lines.append("CONTAINERNAME ?= {}\n".format(infodict["StudentID"]))
+                lines.append("CONTAINERNAME ?= {}\n".format(infodict["EmployeeName"]))
             else:
                 lines.append(i)
 
@@ -131,10 +131,10 @@ def customFiles(infodict, isBuild=False):
 
     logging.info("")
     logging.info("----------CONTAINER INFO----------")
-    logging.info("- User Name = {}".format("clink.{}".format(infodict["StudentID"])))
+    logging.info("- User Name = {}".format("clink.{}".format(infodict["EmployeeName"])))
     logging.info("- User Password = {}".format(infodict["UserPassword"]))
     logging.info("- Website Password = {}".format(infodict["WebsitePassword"]))
-    logging.info("- CONTAINER Name = {}".format(infodict["StudentID"]))
+    logging.info("- CONTAINER Name = {}".format(infodict["EmployeeName"]))
     logging.info("- Port 80 = {}".format(unusedPort))
     logging.info("- Port 22 = {}".format(unusedPort + 1))
     logging.info("- Port 443 = {}".format(unusedPort + 2))
@@ -188,9 +188,9 @@ Y88b  d88P Y88b  d88P 888  T88b    888   888           888
             "WebsitePassword": "",
         }
         configParser = configparser.RawConfigParser()
-        configFilePath = "vnc/config"
+        configFilePath = "vnc/root_password"
         configParser.read(configFilePath)
-        infoDict["RootPassword"] = configParser.get("config", "RootPassword")
+        infoDict["RootPassword"] = configParser.get("root_password", "RootPassword")
 
         # log container image list
         logging.info(
