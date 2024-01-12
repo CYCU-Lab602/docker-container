@@ -21,16 +21,16 @@ OPENCV ?=
 GPUS ?= 0
 
 # clink 設定 PORT
-PORT80 ?= 53876
+PORT80 ?= 53756
 
 # clink 設定 PORT
-PORT443 ?= 53878
+PORT443 ?= 53758
 
 # clink 設定 PORT
-PORT22 ?= 53877
+PORT22 ?= 53757
 
 # clink 設定 PORT
-PORT6006 ?= 53879
+PORT6006 ?= 53759
 
 # clink 設定用戶名稱 clink.{學號}
 USERSNAME ?= clink.test
