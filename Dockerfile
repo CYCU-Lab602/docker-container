@@ -11,8 +11,8 @@ FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 as system
 # get apt sources
 ################################################################################
 # RUN sed 's/mirror:\/\/mirrors\.ubuntu\.com\/mirrors\.txt/http:\/\/mirror01\.idc\.hinet\.net\/ubuntu/' /etc/apt/sources.list | tee /etc/apt/sources.list
-RUN sed -i 's#http://archive.ubuntu.com/ubuntu/#http://free.nchc.org.tw/ubuntu/#' /etc/apt/sources.list;
-
+# RUN sed -i 's#http://archive.ubuntu.com/ubuntu/#http://free.nchc.org.tw/ubuntu/#' /etc/apt/sources.list
+RUN sed -i 's/archive.ubuntu.com/free.nchc.org.tw/g' /etc/apt/sources.list
 ################################################################################
 # install apt packages (1)
 ################################################################################

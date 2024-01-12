@@ -89,7 +89,7 @@ make run
 ```
 ## Limit IP
 ```bash
-sudo iptables -I DOCKER-USER -m iprange -i enp5s0 ! --src-range 140.135.10.210-140.135.11.221 -j DROP
+sudo iptables -I DOCKER-USER -m iprange -i enp4s0 ! --src-range ${IP_RANGE} -j DROP
 ```
 ## File specifications
 1. Replace the randomPort range in [makefile.py](./vnc/makefile.py) with the port of current workstation.

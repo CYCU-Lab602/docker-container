@@ -14,37 +14,37 @@ ARCH ?= amd64
 # These files will be generated from teh Jinja templates (.j2 sources)
 templates = Dockerfile rootfs/etc/supervisor/conf.d/supervisord.conf
 
-# Lab602 選擇openCV版本
+# clink 選擇openCV版本
 OPENCV ?= 
 
-# Lab602 選擇GPU ex: 0 或 0,1
+# clink 選擇GPU ex: 0 或 0,1
 GPUS ?= 0
 
-# Lab602 設定 PORT
-PORT80 ?= 53836
+# clink 設定 PORT
+PORT80 ?= 53876
 
-# Lab602 設定 PORT
-PORT443 ?= 53838
+# clink 設定 PORT
+PORT443 ?= 53878
 
-# Lab602 設定 PORT
-PORT22 ?= 53837
+# clink 設定 PORT
+PORT22 ?= 53877
 
-# Lab602 設定 PORT
-PORT6006 ?= 53839
+# clink 設定 PORT
+PORT6006 ?= 53879
 
-# Lab602 設定用戶名稱 lab602.{學號}
+# clink 設定用戶名稱 clink.{學號}
 USERSNAME ?= clink.test
 
-# Lab602 設定用戶密碼
+# clink 設定用戶密碼
 USERSPSWD ?= 0800
 
-# Lab602 設定ROOT密碼
+# clink 設定ROOT密碼
 ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
 
-# Lab602 設定 container名稱 學號
+# clink 設定 container名稱 學號
 CONTAINERNAME ?= test
 
-# Lab602 設定 container名稱 學號
+# clink 設定 container名稱 學號
 WEBSITEPSWD ?= 0800
 
 # Rebuild the container image
@@ -56,14 +56,13 @@ build: $(templates)
 run:
 	docker run \
 		--gpus '"device=$(GPUS)"' \
-		--memory=36g \
+		--memory=10g \
 		--cpus="6" \
 		--shm-size=10g \
 		-p $(PORT80):80 -p $(PORT443):443 -p $(PORT22):22 -p $(PORT6006):6006 \
 		-v ${PWD}:/src:ro \
-		-v /media/mark-2/data/pipeline:/home/$(USERSNAME)/.pipeline \
-		-v /media/mark-2/backup/pipeline2:/home/$(USERSNAME)/.pipeline2 \
-		-v /media/mark-2/backup/backup:/home/$(USERSNAME)/backup \
+		-v /media/ai/data:/home/$(USERSNAME)/data \
+		-v /media/ai/backup:/home/$(USERSNAME)/backup \
 		-e USER=$(USERSNAME) -e PASSWORD=$(USERSPSWD) \
 		-e ALSADEV=hw:2,0 \
 		-e SSL_PORT=443 \
