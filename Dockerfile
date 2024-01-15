@@ -34,8 +34,7 @@ RUN rm -rf /var/lib/apt/lists/*
 ################################################################################
 RUN apt update
 RUN apt install -y --no-install-recommends --allow-unauthenticated \
-    xvfb x11vnc \
-    vim firefox
+    xvfb x11vnc vim firefox
 RUN apt autoclean -y
 RUN apt autoremove -y
 RUN rm -rf /var/lib/apt/lists/*
