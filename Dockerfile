@@ -1,10 +1,10 @@
-# Built with arch: amd64 flavor: lxqt image: nvidia/cuda:12.3.1-devel-ubuntu20.04
+# Built with arch: amd64 flavor: lxde image: nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
 
 ################################################################################
 # set base system
 ################################################################################
 
-FROM nvidia/cuda:12.3.1-devel-ubuntu20.04 as system
+FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 as system
 
 
 ################################################################################
@@ -35,7 +35,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN apt update
 RUN apt install -y --no-install-recommends --allow-unauthenticated \
     xvfb x11vnc \
-    vim firefox ttf-ubuntu-font-family ttf-wqy-zenhei
+    vim firefox
 RUN apt autoclean -y
 RUN apt autoremove -y
 RUN rm -rf /var/lib/apt/lists/*
@@ -176,7 +176,7 @@ WORKDIR /
 ################################################################################
 # builder
 ################################################################################
-FROM nvidia/cuda:12.3.1-devel-ubuntu20.04 as builder
+FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 as builder
 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends curl ca-certificates gnupg patch
@@ -209,7 +209,7 @@ RUN sed -i 's#app/locale/#novnc/app/locale/#' /src/web/dist/static/novnc/app/ui.
 # merge
 ################################################################################
 FROM system
-LABEL maintainer="fcwu.tw@gmail.com"
+LABEL maintainer="noah@c-link.com.tw"
 COPY --from=builder /src/web/dist/ /usr/local/lib/web/frontend/
 COPY rootfs /
 RUN ln -sf /usr/local/lib/web/frontend/static/websockify /usr/local/lib/web/frontend/static/novnc/utils/websockify && \

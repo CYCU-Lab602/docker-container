@@ -68,13 +68,6 @@ if [ -n "$RELATIVE_URL_ROOT" ]; then
 	sed -i 's|_RELATIVE_URL_ROOT_|'$RELATIVE_URL_ROOT'|' /etc/nginx/sites-enabled/default
 fi
 
-# lab602 start ssh service
-service ssh start
-
-# lab602 activate conda
-echo "export PATH=/opt/conda/bin:$PATH" >> ~/.bashrc
-echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
-
 # clearup
 PASSWORD=
 HTTP_PASSWORD=
