@@ -45,7 +45,7 @@ def findUnusedPort():
                 continue
     logging.debug(usingPortList)
     while True:
-        randomPort = random.randrange(52360, 55560, 4)
+        randomPort = random.randrange(10000, 11000, 4)
         logging.debug(randomPort)
         try:
             logging.debug(usingPortList.index(randomPort))
