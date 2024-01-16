@@ -49,7 +49,8 @@ WEBSITEPSWD ?= mypassword
 
 # Rebuild the container image
 build: $(templates)
-	docker build --no-cache -t $(REPO):$(TAG) .
+	docker build -t $(REPO):$(TAG) .
+	# docker build --no-cache -t $(REPO):$(TAG) .
 
 # Test run the container
 # the local dir will be mounted under /src read-only
