@@ -51,7 +51,7 @@ step6 安裝VNC
     cd docker-ubuntu-vnc-desktop
     git submodule init; git submodule update
 
-step7 製作Image
+step7 製作Image (IMAGE可能過舊不支援，需上 https://hub.docker.com/r/nvidia/cuda 尋找相對應CUDA版本IMAGE)
     make clean
     FLAVOR=lxqt ARCH=amd64 IMAGE=nvidia/cuda:9.2-cudnn7-devel-ubuntu16.04 make build
     make run
