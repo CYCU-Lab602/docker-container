@@ -24,7 +24,7 @@ USER=${USER:-root}
 HOME=/root
 if [ "$USER" != "root" ]; then
     echo "* enable custom user: $USER"
-    useradd --create-home --shell /bin/bash --user-group --groups adm,sudo $USER
+    useradd --create-home --shell /usr/bin/fish --user-group --groups adm,sudo $USER
     if [ -z "$PASSWORD" ]; then
         echo "  set default password to \"ubuntu\""
         PASSWORD=ubuntu
@@ -71,12 +71,11 @@ fi
 # lab602 start ssh service
 service ssh start
 
-# lab602 activate conda
-echo "export PATH=/opt/conda/bin:$PATH" >> ~/.bashrc
-echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
-
 # clearup
 PASSWORD=
 HTTP_PASSWORD=
 
 exec /bin/tini -- supervisord -n -c /etc/supervisor/supervisord.conf
+
+# init conda
+/opt/conda/bin/conda init --all --system

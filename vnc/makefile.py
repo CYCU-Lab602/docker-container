@@ -45,12 +45,22 @@ def findUnusedPort():
                 continue
     logging.debug(usingPortList)
     while True:
-        randomPort = random.randrange(10000, 11000, 4)
+        randomPort = random.randrange(10000, 11000, 5)
         logging.debug(randomPort)
-        try:
-            logging.debug(usingPortList.index(randomPort))
-        except:
+        if not any(
+            n in usingPortList
+            for n in [
+                randomPort,
+                randomPort + 1,
+                randomPort + 2,
+                randomPort + 3,
+                randomPort + 4,
+            ]
+        ):
             break
+            # logging.debug(usingPortList.index(port))
+    #     except:
+    #         break
     return randomPort
 
 
@@ -91,12 +101,14 @@ def customFiles(infodict, isBuild=False):
                 lines.append("GPUS ?= {}\n".format(infodict["GPUS"]))
             elif i.find("PORT80 ?= ") != -1:
                 lines.append("PORT80 ?= {}\n".format(unusedPort))
-            elif i.find("PORT443 ?= ") != -1:
-                lines.append("PORT443 ?= {}\n".format(unusedPort + 2))
             elif i.find("PORT22 ?= ") != -1:
                 lines.append("PORT22 ?= {}\n".format(unusedPort + 1))
+            elif i.find("PORT443 ?= ") != -1:
+                lines.append("PORT443 ?= {}\n".format(unusedPort + 2))
             elif i.find("PORT6006 ?= ") != -1:
                 lines.append("PORT6006 ?= {}\n".format(unusedPort + 3))
+            elif i.find("PORT554 ?= ") != -1:
+                lines.append("PORT554 ?= {}\n".format(unusedPort + 4))
             elif i.find("USERSNAME ?= ") != -1:
                 lines.append(
                     "USERSNAME ?= {}\n".format(
@@ -139,6 +151,7 @@ def customFiles(infodict, isBuild=False):
     logging.info("- Port 22 = {}".format(unusedPort + 1))
     logging.info("- Port 443 = {}".format(unusedPort + 2))
     logging.info("- Port 6006 = {}".format(unusedPort + 3))
+    logging.info("- Port 554 = {}".format(unusedPort + 4))
     logging.info("----------------------------------")
 
 

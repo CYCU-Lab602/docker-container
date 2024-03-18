@@ -11,7 +11,7 @@ FLAVOR ?= lxde
 # armhf or amd64
 ARCH ?= amd64
 
-# These files will be generated from teh Jinja templates (.j2 sources)
+# These files will be generated from the Jinja templates (.j2 sources)
 templates = Dockerfile rootfs/etc/supervisor/conf.d/supervisord.conf
 
 # clink 選擇openCV版本
@@ -31,6 +31,9 @@ PORT22 ?= 49154
 
 # clink 設定 PORT
 PORT6006 ?= 49155
+
+# clink 設定 PORT
+PORT554 ?= 49156
 
 # clink 設定用戶名稱 clink.{學號}
 USERSNAME ?= clink.12345678
@@ -60,7 +63,7 @@ run:
 		--memory=10g \
 		--cpus="6" \
 		--shm-size=10g \
-		-p $(PORT80):80 -p $(PORT443):443 -p $(PORT22):22 -p $(PORT6006):6006 \
+		-p $(PORT80):80 -p $(PORT443):443 -p $(PORT22):22 -p $(PORT6006):6006 -p $(PORT554):554\
 		-v ${PWD}:/src:ro \
 		-v /media/ai/data:/home/$(USERSNAME)/data \
 		-v /media/ai/backup:/home/$(USERSNAME)/backup \
@@ -100,4 +103,5 @@ extra-clean:
 		-D arch=$(ARCH) \
 		-D opencv_version=$(OPENCV) \
 		-D rootpassword=$(ROOTPSWD) \
+		-D usersname=$(USERSNAME) \
 		$< flavors/$(FLAVOR).yml > $@ || rm $@
