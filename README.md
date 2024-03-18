@@ -2,7 +2,7 @@
 - __Description:__ set up docker dependencies
 - __Author:__ Guan Liang, Lin
 - __Contact:__ popshia@gmail.com
-- __Date:__ 2024-01-10
+- __Date:__ 2024-03-18
 
 # Table of Contents
 * [Install nvidia drivers](#install-nvidia-drivers)
