@@ -1,9 +1,9 @@
 ################################################################################
 # set base system
-# Built with arch: amd64 flavor: lxde image: nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
+# Built with arch: amd64 flavor: lxde image: nvidia/cuda:12.3.1-devel-ubuntu22.04
 ################################################################################
 
-FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 as system
+FROM nvidia/cuda:12.3.1-devel-ubuntu22.04 as system
 
 
 ################################################################################
@@ -146,7 +146,7 @@ WORKDIR /
 ################################################################################
 # builder
 ################################################################################
-FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 as builder
+FROM nvidia/cuda:12.3.1-devel-ubuntu22.04 as builder
 
 RUN apt update
 RUN apt install -y --no-install-recommends curl ca-certificates gnupg patch

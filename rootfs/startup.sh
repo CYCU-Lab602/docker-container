@@ -24,7 +24,7 @@ USER=${USER:-root}
 HOME=/root
 if [ "$USER" != "root" ]; then
     echo "* enable custom user: $USER"
-    useradd --create-home --shell /bin/bash --user-group --groups adm,sudo $USER
+    useradd --create-home --shell /usr/bin/fish --user-group --groups adm,sudo $USER
     if [ -z "$PASSWORD" ]; then
         echo "  set default password to \"ubuntu\""
         PASSWORD=ubuntu
@@ -68,8 +68,14 @@ if [ -n "$RELATIVE_URL_ROOT" ]; then
 	sed -i 's|_RELATIVE_URL_ROOT_|'$RELATIVE_URL_ROOT'|' /etc/nginx/sites-enabled/default
 fi
 
+# lab602 start ssh service
+service ssh start
+
 # clearup
 PASSWORD=
 HTTP_PASSWORD=
 
 exec /bin/tini -- supervisord -n -c /etc/supervisor/supervisord.conf
+
+# init conda
+/opt/conda/bin/conda init --all --system
