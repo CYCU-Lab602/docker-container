@@ -112,7 +112,8 @@ def customFiles(infodict, isBuild=False):
             elif i.find("USERSNAME ?= ") != -1:
                 lines.append(
                     "USERSNAME ?= {}\n".format(
-                        "clink.{}".format(infodict["EmployeeName"])
+                        infodict["EmployeeName"]
+                        # "clink.{}".format(infodict["EmployeeName"])
                     )
                 )
             elif i.find("USERSPSWD ?= ") != -1:
@@ -143,9 +144,10 @@ def customFiles(infodict, isBuild=False):
 
     logging.info("")
     logging.info("----------CONTAINER INFO----------")
-    logging.info("- User Name = {}".format("clink.{}".format(infodict["EmployeeName"])))
+    # logging.info("- User Name = {}".format("clink.{}".format(infodict["EmployeeName"])))
+    logging.info("- User Name = {}".format(infodict["EmployeeName"]))
     logging.info("- User Password = {}".format(infodict["UserPassword"]))
-    logging.info("- Website Password = {}".format(infodict["WebsitePassword"]))
+    logging.info("- VNC Password = {}".format(infodict["WebsitePassword"]))
     logging.info("- CONTAINER Name = {}".format(infodict["EmployeeName"]))
     logging.info("- Port 80 = {}".format(unusedPort))
     logging.info("- Port 22 = {}".format(unusedPort + 1))
@@ -206,23 +208,23 @@ Y88b  d88P Y88b  d88P 888  T88b    888   888           888
         infoDict["RootPassword"] = configParser.get("root_password", "RootPassword")
 
         # log container image list
-        logging.info(
-            "\n------------------------Supported Images-------------------------"
-        )
-        for index, image in enumerate(support_images):
-            logging.info("|\t {}: {}\t\t|".format(index, image))
-        logging.info(
-            "-----------------------------------------------------------------"
-        )
+        # logging.info(
+        #     "\n------------------------Supported Images-------------------------"
+        # )
+        # for index, image in enumerate(support_images):
+        #     logging.info("|\t {}: {}\t\t|".format(index, image))
+        # logging.info(
+        #     "-----------------------------------------------------------------"
+        # )
 
         while True:
-            cudaVersion = input("\n(1) Choose your container image: ")
+            # cudaVersion = input("\n(1) Choose your container image: ")
 
-            if int(cudaVersion) >= len(support_images):
-                logging.info("Error index!")
-                break
-            infoDict["tag"] = support_images[int(cudaVersion)].split(":")[1]
-            infoDict["image"] = support_images[int(cudaVersion)]
+            # if int(cudaVersion) >= len(support_images):
+            #     logging.info("Error index!")
+            #     break
+            infoDict["tag"] = support_images[0].split(":")[1]
+            infoDict["image"] = support_images[0]
 
             while True:
                 smiOutput = (
@@ -234,21 +236,23 @@ Y88b  d88P Y88b  d88P 888  T88b    888   888           888
                     "\n-------------------------Supported GPUs--------------------------"
                 )
                 for i in range(len(smiOutput) - 1):
-                    logging.info("|\t {}\t\t\t|".format(smiOutput[i].split("(")[0]))
+                    logging.info("|\t\t {}\t\t|".format(smiOutput[i].split("(")[0]))
                 logging.info(
                     "-----------------------------------------------------------------"
                 )
 
                 while True:
-                    gpusAns = input("\n(2) Choose the GPU(s) you want to use: ")
-                    if len(gpusAns) > int((len(smiOutput) - 2) * 2 + 1):
-                        logging.info("Error index!")
+                    gpusAns = input("\n(1) Choose the GPU(s) you want to use: ")
+                    if len(gpusAns) > int((len(smiOutput) - 2) * 2 + 1) or int(
+                        gpusAns
+                    ) >= int((len(smiOutput) - 2) * 2 + 1):
+                        logging.info("\n!! ERROR INDEX!")
                         break
                     else:
                         infoDict["GPUS"] = gpusAns
 
                     while True:
-                        employeeName = input("\n(3) Enter your container's name: ")
+                        employeeName = input("\n(2) Enter your container's name: ")
                         infoDict["EmployeeName"] = employeeName
 
                         while True:
@@ -258,25 +262,27 @@ Y88b  d88P Y88b  d88P 888  T88b    888   888           888
                                 infoDict["EmployeeName"] in x for x in container_names
                             ):
                                 isDeleted = input(
-                                    "\nFound duplicate container, stop & remove? (y/n) "
+                                    "\n!! FOUND DUPLICATE CONTAINER, STOP & REMOVE? (y/n) "
                                 )
                                 if isDeleted == "y":
                                     docker.container_stop_id(infoDict["EmployeeName"])
                                     logging.info(
-                                        "Stopped: {}".format(infoDict["EmployeeName"])
+                                        "\nSTOPPED: {}".format(infoDict["EmployeeName"])
                                     )
                                     time.sleep(0.3)
                                     docker.container_rm_id(infoDict["EmployeeName"])
                                     logging.info(
-                                        "Killed: {}".format(infoDict["EmployeeName"])
+                                        "\nKILLED: {}".format(infoDict["EmployeeName"])
                                     )
                                 else:
-                                    logging.info("Please enter a new container name!\n")
+                                    logging.info(
+                                        "\n!! PLEASE ENTER A NEW CONTAINER NAME!\n"
+                                    )
                                     break
 
                             while True:
-                                userPassword = input("\n(4) Enter your ssh password: ")
-                                vncPassword = input("\n(5) Enter your vnc password: ")
+                                userPassword = input("\n(3) Enter your ssh password: ")
+                                vncPassword = input("\n(4) Enter your vnc password: ")
 
                                 while True:
                                     isPassOK = input(
@@ -284,12 +290,11 @@ Y88b  d88P Y88b  d88P 888  T88b    888   888           888
 (6) Please review your container info:
     - Container name: {}
     - User Password : {}
-    - Website password : {}\n
+    - VNC password  : {}\n
 Confirm? (y/n) """.format(
                                             employeeName, userPassword, vncPassword
                                         )
                                     )
-
                                     if isPassOK == "y":
                                         infoDict["UserPassword"] = userPassword
                                         infoDict["WebsitePassword"] = vncPassword

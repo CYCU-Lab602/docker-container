@@ -2,9 +2,9 @@
 
 # Default values for variables
 REPO  ?= clink
-TAG   ?= 12.3.1-devel-ubuntu22.04
+TAG   ?= 11.4.3-cudnn8-devel-ubuntu20.04
 # you can choose other base image versions
-IMAGE ?= nvidia/cuda:12.3.1-devel-ubuntu22.04
+IMAGE ?= nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
 
 # choose from supported flavors (see available ones in ./flavors/*.yml)
 FLAVOR ?= lxde
@@ -21,22 +21,22 @@ OPENCV ?=
 GPUS ?= 0
 
 # clink 設定 PORT
-PORT80 ?= 10145
+PORT80 ?= 10020
 
 # clink 設定 PORT
-PORT443 ?= 10147
+PORT443 ?= 10022
 
 # clink 設定 PORT
-PORT22 ?= 10146
+PORT22 ?= 10021
 
 # clink 設定 PORT
-PORT6006 ?= 10148
+PORT6006 ?= 10023
 
 # clink 設定 PORT
-PORT554 ?= 10149
+PORT554 ?= 10024
 
 # clink 設定用戶名稱 clink.{學號}
-USERSNAME ?= clink.test
+USERSNAME ?= v7
 
 # clink 設定用戶密碼
 USERSPSWD ?= 0800
@@ -45,7 +45,7 @@ USERSPSWD ?= 0800
 ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
 
 # clink 設定 container名稱 學號
-CONTAINERNAME ?= test
+CONTAINERNAME ?= v7
 
 # clink 設定 container名稱 學號
 WEBSITEPSWD ?= 0800
