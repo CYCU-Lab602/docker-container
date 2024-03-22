@@ -70,7 +70,7 @@ run:
 		-e USER=$(USERSNAME) -e PASSWORD=$(USERSPSWD) \
 		-e ALSADEV=hw:2,0 \
 		-e SSL_PORT=443 \
-		-e RESOLUTION=1920x1080 \
+		-e RESOLUTION=1024x768 \
 		-e HTTP_PASSWORD=$(WEBSITEPSWD) \
 		-v ${PWD}/ssl:/etc/nginx/ssl \
 		--device /dev/snd \

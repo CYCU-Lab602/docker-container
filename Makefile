@@ -21,22 +21,22 @@ OPENCV ?=
 GPUS ?= 0
 
 # clink 設定 PORT
-PORT80 ?= 10020
+PORT80 ?= 10600
 
 # clink 設定 PORT
-PORT443 ?= 10022
+PORT443 ?= 10602
 
 # clink 設定 PORT
-PORT22 ?= 10021
+PORT22 ?= 10601
 
 # clink 設定 PORT
-PORT6006 ?= 10023
+PORT6006 ?= 10603
 
 # clink 設定 PORT
-PORT554 ?= 10024
+PORT554 ?= 10604
 
 # clink 設定用戶名稱 clink.{學號}
-USERSNAME ?= v7
+USERSNAME ?= test
 
 # clink 設定用戶密碼
 USERSPSWD ?= 0800
@@ -45,7 +45,7 @@ USERSPSWD ?= 0800
 ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
 
 # clink 設定 container名稱 學號
-CONTAINERNAME ?= v7
+CONTAINERNAME ?= test
 
 # clink 設定 container名稱 學號
 WEBSITEPSWD ?= 0800

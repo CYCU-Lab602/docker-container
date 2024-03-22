@@ -20,18 +20,18 @@ RUN sed -i 's/archive.ubuntu.com/free.nchc.org.tw/g' /etc/apt/sources.list
 # install apt packages
 ################################################################################
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update \
-	&& apt install -y --no-install-recommends \
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
 	software-properties-common apache2-utils \
 	ca-certificates gnupg patch \
-	&& apt install -y --no-install-recommends --allow-unauthenticated \
+	&& apt-get install -y --no-install-recommends --allow-unauthenticated \
     supervisor nginx sudo net-tools zenity xz-utils \
     dbus-x11 x11-utils alsa-utils \
     mesa-utils libgl1-mesa-dri \
     xvfb x11vnc vim firefox ffmpeg \
 	lxde gtk2-engines-murrine \
 	gnome-themes-standard gtk2-engines-pixbuf arc-theme \
-	&& apt install -y gpg-agent ssh gedit openssh-server \
+	&& apt-get install -y gpg-agent ssh gedit openssh-server \
 	cmake git wget unzip yasm pkg-config libavcodec-dev \
     libavformat-dev libswscale-dev libavresample-dev libgstreamer1.0-dev \
     libgstreamer-plugins-base1.0-dev libxvidcore-dev x264 libx264-dev \
@@ -49,7 +49,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /bin/
 RUN chmod +x /bin/tini
 
 ################################################################################
-# ffmpeg
+# ffmpeg symlinking
 ################################################################################
 RUN mkdir /usr/local/ffmpeg
 RUN ln -s /usr/bin/ffmpeg /usr/local/ffmpeg/ffmpeg
@@ -59,7 +59,7 @@ RUN ln -s /usr/bin/ffmpeg /usr/local/ffmpeg/ffmpeg
 ################################################################################
 ENV PYTHON_VERSION 3.10
 ENV CONDA_DIR /opt/conda
-RUN apt update && apt install -y curl \
+RUN apt-get update && apt-get install -y curl \
 	&& curl -L https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh \
 	&& chmod +x /tmp/miniconda.sh \
 	&& bash /tmp/miniconda.sh -b -p /opt/conda/ \
@@ -72,11 +72,11 @@ RUN apt update && apt install -y curl \
 ################################################################################
 COPY rootfs/usr/local/lib/web/backend/requirements.txt /tmp/
 RUN dpkg-query -W -f='${Package}\n' > /tmp/a.txt \
-	&& apt install -y --no-install-recommends python3-pip python3-dev build-essential \
+	&& apt-get install -y --no-install-recommends python3-pip python3-dev build-essential \
 	&& pip3 install setuptools wheel && pip3 install -r /tmp/requirements.txt \
 	&& ln -s /usr/bin/python3 /usr/local/bin/python \
 	&& dpkg-query -W -f='${Package}\n' > /tmp/b.txt \
-	&& apt remove -y `diff --changed-group-format='%>' --unchanged-group-format='' /tmp/a.txt /tmp/b.txt | xargs` \
+	&& apt-get remove -y `diff --changed-group-format='%>' --unchanged-group-format='' /tmp/a.txt /tmp/b.txt | xargs` \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm /tmp/a.txt /tmp/b.txt
 
@@ -92,24 +92,23 @@ RUN mkdir /var/run/sshd \
 ################################################################################
 # builder
 ################################################################################
-WORKDIR /
 FROM nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04 as builder
 
 
 ################################################################################
 # nodejs
 ################################################################################
-RUN apt update && apt install -y curl \
-	&& curl -fsSL https://deb.nodesource.com/setup_21.x | bash - \
-	&& apt install -y nodejs
+RUN apt-get update && apt-get install -y curl \
+	&& curl -fsSL https://deb.nodesource.com/setup_current.x | bash - \
+	&& apt-get install -y nodejs
 
 ################################################################################
 # yarn
 ################################################################################
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && apt update \
-    && apt install -y yarn
+    && apt-get update \
+    && apt-get install -y yarn
 
 ################################################################################
 # build frontend
@@ -139,23 +138,21 @@ EXPOSE 80
 EXPOSE 22
 
 ################################################################################
-# libfaketime
+# set timezone
 ################################################################################
 RUN mkdir /home/repos \
 	&& git clone https://github.com/wolfcw/libfaketime.git /home/repos/libfaketime \
-	&& cd /home/repos/libfaketime/src && make install
-
-################################################################################
-# set timezone
-################################################################################
-RUN echo "Asia/Taipei" > /etc/timezone \
+	&& cd /home/repos/libfaketime/src && make install \
+	&& echo "Asia/Taipei" > /etc/timezone \
 	&& dpkg-reconfigure -f noninteractive tzdata
 
 ###############################################################################
 # neovim
 ###############################################################################
 RUN git clone https://github.com/neovim/neovim /home/repos/neovim \
-	&& cd /home/repos/neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo && make install
+	&& cd /home/repos/neovim \
+	&& git checkout stable \
+	&& make CMAKE_BUILD_TYPE=RelWithDebInfo && make install
 
 ################################################################################
 # yolov7
@@ -169,20 +166,25 @@ RUN git clone https://github.com/WongKinYiu/yolov7 /home/repos/yolov7 \
 # fish
 ################################################################################
 RUN apt-add-repository -y ppa:fish-shell/release-3 \
-	&& apt update \
-	&& apt install -y fish \
+	&& apt-get update \
+	&& apt-get install -y fish \
 	&& /opt/conda/bin/conda init --all
 
 ################################################################################
-# post process
+# dotfiles
 ################################################################################
-RUN apt update \
-	&& apt upgrade -y \
-	&& apt autoclean -y \
-	&& apt autoremove -y \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /var/cache/apt/*
-WORKDIR /home/
+RUN git clone https://github.com/popshia/dotfiles /home/repos/dotfiles
+
+################################################################################
+# apt upgrade & cleanup
+################################################################################
+RUN apt-get update \
+	&& apt-get upgrade -y \
+	&& apt-get autoclean -y \
+
+################################################################################
+# postprocess
+################################################################################
 RUN chsh -s /usr/bin/fish
 HEALTHCHECK --interval=30s --timeout=5s \
 CMD curl --fail http://127.0.0.1:6079/api/health
