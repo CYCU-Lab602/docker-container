@@ -84,15 +84,13 @@ docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 git submodule init; git submodule update
 ```
 ## Make image
+> Tweak the paths in [Makefile](./Makefile).
 ```bash
 sudo apt install -y make
-make clean
-FLAVOR=lxqt ARCH=amd64 IMAGE=nvidia/cuda:12.3.1-devel-ubuntu20.04 make build
-make run
+python3 vnc/makefile.py
 ```
-## Limit IP
+## Install `ctop` to monitor container usage
 ```bash
-sudo iptables -I DOCKER-USER -m iprange -i enp4s0 ! --src-range ${IP_RANGE} -j DROP
+sudo wget https://github.com/bcicen/ctop/releases/download/v0.7.7/ctop-0.7.7-linux-amd64 -O /usr/local/bin/ctop
+sudo chmod +x /usr/local/bin/ctop
 ```
-## File specifications
-1. Tweak the paths in [Makefile](./Makefile).
