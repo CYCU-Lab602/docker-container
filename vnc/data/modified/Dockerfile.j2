@@ -150,16 +150,14 @@ EXPOSE 22
 ################################################################################
 # set timezone
 ################################################################################
-RUN mkdir /home/repos \
-	&& git clone https://github.com/wolfcw/libfaketime.git /home/repos/libfaketime \
-	&& cd /home/repos/libfaketime/src && make install \
-	&& echo "Asia/Taipei" > /etc/timezone \
-	&& dpkg-reconfigure -f noninteractive tzdata
+RUN rm -rf /etc/localtime \
+	&& ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime
 
 ###############################################################################
 # neovim
 ###############################################################################
-RUN git clone https://github.com/neovim/neovim /home/repos/neovim \
+RUN mkdir /home/repos \
+	&& git clone https://github.com/neovim/neovim /home/repos/neovim \
 	&& cd /home/repos/neovim \
 	&& git checkout stable \
 	&& make CMAKE_BUILD_TYPE=RelWithDebInfo && make install

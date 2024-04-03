@@ -21,19 +21,19 @@ OPENCV ?=
 GPUS ?= 0
 
 # clink 設定 PORT
-PORT80 ?= 10600
+PORT80 ?= 10370
 
 # clink 設定 PORT
-PORT443 ?= 10602
+PORT443 ?= 10372
 
 # clink 設定 PORT
-PORT22 ?= 10601
+PORT22 ?= 10371
 
 # clink 設定 PORT
-PORT6006 ?= 10603
+PORT6006 ?= 10373
 
 # clink 設定 PORT
-PORT554 ?= 10604
+PORT554 ?= 10374
 
 # clink 設定用戶名稱 clink.{學號}
 USERSNAME ?= test
@@ -70,7 +70,7 @@ run:
 		-e USER=$(USERSNAME) -e PASSWORD=$(USERSPSWD) \
 		-e ALSADEV=hw:2,0 \
 		-e SSL_PORT=443 \
-		-e RESOLUTION=1920x1080 \
+		-e RESOLUTION=1024x768 \
 		-e HTTP_PASSWORD=$(WEBSITEPSWD) \
 		-v ${PWD}/ssl:/etc/nginx/ssl \
 		--device /dev/snd \
