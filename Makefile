@@ -15,7 +15,7 @@ ARCH ?= amd64
 templates = Dockerfile rootfs/etc/supervisor/conf.d/supervisord.conf
 
 # clink 選擇openCV版本
-OPENCV ?= 
+OPENCV ?=
 
 # clink 選擇GPU ex: 0 或 0,1
 GPUS ?= 0
@@ -35,7 +35,7 @@ PORT6006 ?= 10373
 # clink 設定 PORT
 PORT554 ?= 10374
 
-# clink 設定用戶名稱 clink.{學號}
+# clink 設定用戶名稱 clink.{employee_name}
 USERSNAME ?= test
 
 # clink 設定用戶密碼
@@ -44,10 +44,10 @@ USERSPSWD ?= 0800
 # clink 設定ROOT密碼
 ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
 
-# clink 設定 container名稱 學號
+# clink 設定 container名稱
 CONTAINERNAME ?= test
 
-# clink 設定 container名稱 學號
+# clink 設定 container名稱
 WEBSITEPSWD ?= 0800
 
 # Rebuild the container image
