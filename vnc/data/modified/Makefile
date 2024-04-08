@@ -72,6 +72,8 @@ run:
 		-e SSL_PORT=443 \
 		-e RESOLUTION=1024x768 \
 		-e HTTP_PASSWORD=$(WEBSITEPSWD) \
+		-e DISPLAY=$(DISPLAY) \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-v ${PWD}/ssl:/etc/nginx/ssl \
 		--device /dev/snd \
 		--name $(CONTAINERNAME) \
