@@ -1,21 +1,19 @@
 .PHONY: build run
 
 # Default values for variables
-REPO  ?= dorowu/ubuntu-desktop-lxde-vnc
-TAG   ?= latest
+REPO  ?= clink
+TAG   ?= 11.4.3-cudnn8-devel-ubuntu20.04
 # you can choose other base image versions
-IMAGE ?= ubuntu:20.04
-# IMAGE ?= nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+IMAGE ?= nvidia/cuda:11.4.3-cudnn8-devel-ubuntu20.04
+
 # choose from supported flavors (see available ones in ./flavors/*.yml)
 FLAVOR ?= lxde
 # armhf or amd64
 ARCH ?= amd64
 
-# These files will be generated from teh Jinja templates (.j2 sources)
+# These files will be generated from the Jinja templates (.j2 sources)
 templates = Dockerfile rootfs/etc/supervisor/conf.d/supervisord.conf
 
-<<<<<<< HEAD
-||||||| d54b98b
 # clink 選擇openCV版本
 OPENCV ?= 
 
@@ -23,22 +21,22 @@ OPENCV ?=
 GPUS ?= 0
 
 # clink 設定 PORT
-PORT80 ?= 10370
+PORT80 ?= 10900
 
 # clink 設定 PORT
-PORT443 ?= 10372
+PORT443 ?= 10902
 
 # clink 設定 PORT
-PORT22 ?= 10371
+PORT22 ?= 10901
 
 # clink 設定 PORT
-PORT6006 ?= 10373
+PORT6006 ?= 10903
 
 # clink 設定 PORT
-PORT554 ?= 10374
+PORT554 ?= 10904
 
 # clink 設定用戶名稱 clink.{學號}
-USERSNAME ?= test
+USERSNAME ?= v7
 
 # clink 設定用戶密碼
 USERSPSWD ?= 0800
@@ -47,67 +45,38 @@ USERSPSWD ?= 0800
 ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
 
 # clink 設定 container名稱 學號
-CONTAINERNAME ?= test
+CONTAINERNAME ?= v7
 
 # clink 設定 container名稱 學號
 WEBSITEPSWD ?= 0800
 
-=======
-# clink 選擇openCV版本
-OPENCV ?=
-
-# clink 選擇GPU ex: 0 或 0,1
-GPUS ?= 0
-
-# clink 設定 PORT
-PORT80 ?= 10370
-
-# clink 設定 PORT
-PORT443 ?= 10372
-
-# clink 設定 PORT
-PORT22 ?= 10371
-
-# clink 設定 PORT
-PORT6006 ?= 10373
-
-# clink 設定 PORT
-PORT554 ?= 10374
-
-# clink 設定用戶名稱 clink.{employee_name}
-USERSNAME ?= test
-
-# clink 設定用戶密碼
-USERSPSWD ?= 0800
-
-# clink 設定ROOT密碼
-ROOTPSWD ?= yHrvUU7K5R0ArGEzWPm3hmgDLjrhdtveQWsGrJ4oJznkvxqhJxr1nqyKMF7KpPxn
-
-# clink 設定 container名稱
-CONTAINERNAME ?= test
-
-# clink 設定 container名稱
-WEBSITEPSWD ?= 0800
-
->>>>>>> refs/remotes/origin/clink
 # Rebuild the container image
 build: $(templates)
 	docker build -t $(REPO):$(TAG) .
+	# docker build --no-cache -t $(REPO):$(TAG) .
 
 # Test run the container
 # the local dir will be mounted under /src read-only
 run:
-	docker run --privileged --rm \
-		-p 6080:80 -p 6081:443 \
+	docker run \
+		--gpus '"device=$(GPUS)"' \
+		--memory=10g \
+		--cpus="6" \
+		--shm-size=10g \
+		-p $(PORT80):80 -p $(PORT443):443 -p $(PORT22):22 -p $(PORT6006):6006 -p $(PORT554):554\
 		-v ${PWD}:/src:ro \
-		-e USER=doro -e PASSWORD=mypassword \
+		-v /media/ai/data:/home/$(USERSNAME)/data \
+		-v /media/ai/backup:/home/$(USERSNAME)/backup \
+		-e USER=$(USERSNAME) -e PASSWORD=$(USERSPSWD) \
 		-e ALSADEV=hw:2,0 \
 		-e SSL_PORT=443 \
-		-e RELATIVE_URL_ROOT=approot \
-		-e OPENBOX_ARGS="--startup /usr/bin/galculator" \
+		-e RESOLUTION=1024x768 \
+		-e HTTP_PASSWORD=$(WEBSITEPSWD) \
+		-e DISPLAY=$(DISPLAY) \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
 		-v ${PWD}/ssl:/etc/nginx/ssl \
 		--device /dev/snd \
-		--name ubuntu-desktop-lxde-test \
+		--name $(CONTAINERNAME) \
 		$(REPO):$(TAG)
 
 # Connect inside the running container for debugging
@@ -134,4 +103,7 @@ extra-clean:
 		-D image=$(IMAGE) \
 		-D localbuild=$(LOCALBUILD) \
 		-D arch=$(ARCH) \
+		-D opencv_version=$(OPENCV) \
+		-D rootpassword=$(ROOTPSWD) \
+		-D usersname=$(USERSNAME) \
 		$< flavors/$(FLAVOR).yml > $@ || rm $@
