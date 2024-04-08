@@ -5,6 +5,7 @@
 - __Date:__ 2024-03-18
 
 # Table of Contents
+* [Checkout to clink branch](#checkout-to-clink-branch)
 * [Install nvidia drivers](#install-nvidia-drivers)
 * [Install docker engine](#install-docker-engine)
 * [Setup docker permissions](#setup-docker-permissions)
@@ -15,18 +16,22 @@
 * [IP settings](#ip-settings)
 * [File specifications](#file-specifications)
 
+## Checkout to `clink` branch
+```bash
+git checkout clink
+```
 ## Install nvidia drivers
 ```bash
 # check
-sudo add-apt-repository ppa:graphics-drivers/ppa
+sudo add-apt-repository -y ppa:graphics-drivers/ppa
 sudo apt update
-sudo apt install ubuntu-drivers-common
+sudo apt install -y ubuntu-drivers-common
 # check device drivers
 ubuntu-drivers devices
 # auto install drivers
 ubuntu-drivers autoinstall
 # or choose the recommend driver
-sudo apt install (nvidia-430)
+sudo apt install -y (nvidia-430)
 # reboot to take effects
 sudo reboot
 ```
@@ -34,7 +39,7 @@ sudo reboot
 ```bash
 # Add Docker's official GPG key:
 sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg
+sudo apt-get install -y ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
@@ -45,7 +50,7 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 # Install the latest version
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 # Verify installation
 sudo docker run hello-world
 ```
@@ -72,24 +77,20 @@ sudo systemctl restart crio
 
 ## Test
 ```bash
-docker run --gpus all nvidia/cuda:10.0-base nvidia-smi
+docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 ```
 ## Install VNC
 ```bash
-git clone --recursive https://github.com/fcwu/docker-ubuntu-vnc-desktop
-cd docker-ubuntu-vnc-desktop
 git submodule init; git submodule update
 ```
 ## Make image
+> Tweak the paths in [Makefile](./Makefile).
 ```bash
-make clean
-FLAVOR=lxqt ARCH=amd64 IMAGE=nvidia/cuda:12.3.1-devel-ubuntu20.04 make build
-make run
+sudo apt install -y make
+python3 vnc/makefile.py
 ```
-## Limit IP
+## Install `ctop` to monitor container usage
 ```bash
-sudo iptables -I DOCKER-USER -m iprange -i enp4s0 ! --src-range ${IP_RANGE} -j DROP
+sudo wget https://github.com/bcicen/ctop/releases/download/v0.7.7/ctop-0.7.7-linux-amd64 -O /usr/local/bin/ctop
+sudo chmod +x /usr/local/bin/ctop
 ```
-## File specifications
-1. Replace the randomPort range in [makefile.py](./vnc/makefile.py) with the port of current workstation.
-2. Replace the paths in [Makefile](./Makefile).
