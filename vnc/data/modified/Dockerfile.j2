@@ -188,13 +188,6 @@ RUN mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packag
 	&& apt-get install gh -y
 
 ################################################################################
-# apt cleanup
-################################################################################
-RUN apt-get update \
-	&& apt-get autoclean -y \
-	&& apt-get autoremove -y
-
-################################################################################
 # nodejs
 ################################################################################
 RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - \
