@@ -1,7 +1,7 @@
 # YoloV7 Container Manual
 - __Author:__ Guan-Liang Lin
 - __Contact:__ noah@c-link.com.tw
-- __Date:__ 2024-03-22
+- __Date:__ 2024-04-10
 ## Switch to admin user to gain access to root directory
 ```bash
 admin # ask admin's password from maintainer
