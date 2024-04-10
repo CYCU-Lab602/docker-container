@@ -155,7 +155,7 @@ RUN mkdir /home/repos \
 ################################################################################
 # yolov7
 ################################################################################
-RUN git clone https://github.com/WongKinYiu/yolov7 /home/repos/yolov7 \
+RUN git clone https://github.com/popshia/clink-yolov7 /home/repos/yolov7 \
 	&& cd /home/repos/yolov7 && /opt/conda/bin/conda create -n v7 python=3.9 -y \
 	&& source /opt/conda/etc/profile.d/conda.sh && conda activate v7 \
 	&& pip install -r /home/repos/yolov7/requirements.txt && conda deactivate
@@ -169,9 +169,13 @@ RUN apt-add-repository -y ppa:fish-shell/release-3 \
 	&& /opt/conda/bin/conda init --all
 
 ################################################################################
-# dotfiles
+# gh cli
 ################################################################################
-RUN git clone https://github.com/popshia/dotfiles /home/repos/dotfiles
+RUN mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+	&& chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+	&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+	&& apt-get update \
+	&& apt-get install gh -y
 
 ################################################################################
 # apt upgrade & cleanup
@@ -179,6 +183,13 @@ RUN git clone https://github.com/popshia/dotfiles /home/repos/dotfiles
 RUN apt-get update \
 	&& apt-get upgrade -y \
 	&& apt-get autoclean -y \
+	&& apt-get autoremove -y
+
+################################################################################
+# nodejs
+################################################################################
+RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - \
+	&& apt-get install -y nodejs
 
 ################################################################################
 # postprocess

@@ -75,7 +75,11 @@ service ssh start
 PASSWORD=
 HTTP_PASSWORD=
 
-/bin/tini -s -- supervisord -n -c /etc/supervisor/supervisord.conf
+CONTAINER_FIRST_STARTUP="CONTAINER_FIRST_STARTUP"
+if [ ! -e /$CONTAINER_FIRST_STARTUP ]; then
+    touch /$CONTAINER_FIRST_STARTUP
+	/opt/conda/bin/conda init --all --system
+fi
 
-# init conda
-/opt/conda/bin/conda init --all --system
+exec /bin/tini -s -- supervisord -n -c /etc/supervisor/supervisord.conf
+
