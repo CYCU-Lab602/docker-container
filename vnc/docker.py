@@ -6,7 +6,7 @@ import subprocess
 
 
 def image_ls_tags():
-    """docker image ls ---> list imgage TAGs"""
+    """docker image ls ---> list image TAGs"""
 
     imagesTagList = []
     process = subprocess.Popen(["docker", "image", "ls"], stdout=subprocess.PIPE)
