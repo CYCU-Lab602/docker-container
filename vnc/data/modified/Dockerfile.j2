@@ -188,10 +188,9 @@ RUN mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packag
 	&& apt-get install gh -y
 
 ################################################################################
-# apt upgrade & cleanup
+# apt cleanup
 ################################################################################
 RUN apt-get update \
-	&& apt-get upgrade -y \
 	&& apt-get autoclean -y \
 	&& apt-get autoremove -y
 
