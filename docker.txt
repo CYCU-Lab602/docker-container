@@ -8,7 +8,7 @@ step2 安裝nvidia驅動(只需安裝驅動)
 使用以下指令 確認可以安裝驅動版本
     ubuntu-drivers devices
 
-    sudo apt install nvidia-430 
+    sudo apt install nvidia-driver-430 
     sudo reboot
 
 step3 安裝docker
