@@ -200,3 +200,9 @@ RUN chsh -s /usr/bin/fish
 HEALTHCHECK --interval=30s --timeout=5s \
 CMD curl --fail http://127.0.0.1:6079/api/health
 ENTRYPOINT ["/startup.sh"]
+
+
+################################################################################
+# remove sudo permission
+################################################################################
+# RUN apt-get purge sudo -y

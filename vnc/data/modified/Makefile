@@ -77,7 +77,7 @@ run:
 		-v ${PWD}/ssl:/etc/nginx/ssl \
 		--device /dev/snd \
 		--name $(CONTAINERNAME) \
-		--restart always
+		--restart always \
 		$(REPO):$(TAG)
 
 # Connect inside the running container for debugging

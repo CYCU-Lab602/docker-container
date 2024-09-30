@@ -178,14 +178,6 @@ RUN mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packag
 	&& apt-get install gh -y
 
 ################################################################################
-# apt upgrade & cleanup
-################################################################################
-RUN apt-get update \
-	&& apt-get upgrade -y \
-	&& apt-get autoclean -y \
-	&& apt-get autoremove -y
-
-################################################################################
 # nodejs
 ################################################################################
 RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - \
@@ -198,3 +190,9 @@ RUN chsh -s /usr/bin/fish
 HEALTHCHECK --interval=30s --timeout=5s \
 CMD curl --fail http://127.0.0.1:6079/api/health
 ENTRYPOINT ["/startup.sh"]
+
+
+################################################################################
+# remove sudo permission
+################################################################################
+# RUN apt-get purge sudo -y
