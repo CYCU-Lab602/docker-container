@@ -1,4 +1,4 @@
-# Lab602 Workstation Container Script
+# C-Link Workstation Container Script
 - __Description:__ set up docker dependencies
 - __Author:__ Guan Liang, Lin
 - __Contact:__ popshia@gmail.com
