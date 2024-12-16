@@ -84,7 +84,7 @@ docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 git submodule init; git submodule update
 ```
 ## Make image
-> Tweak the paths in [Makefile](./Makefile).
+> Tweak the paths in [Makefile](./vnc/data/modified/Makefile).
 ```bash
 sudo apt install -y make
 python3 vnc/makefile.py
