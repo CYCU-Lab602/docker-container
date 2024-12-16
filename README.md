@@ -1,5 +1,5 @@
 # C-Link Workstation Container Script
-- __Description:__ set up docker dependencies
+- __Description:__ Set up docker dependencies
 - __Author:__ Guan Liang, Lin
 - __Contact:__ popshia@gmail.com
 - __Date:__ 2024-03-18
